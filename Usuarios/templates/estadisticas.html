@@ -2,6 +2,18 @@
 
 {% block title %}Estadísticas - Sistema de Biblioteca{% endblock %}
 
+{% block extra_js %}
+<script src="{% static 'biblioteca/js/estadisticas.js' %}"></script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'biblioteca/css/estadisticas.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'biblioteca/js/estadisticas.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <div class="row mb-4">
@@ -12,7 +24,7 @@
 
     <div class="row">
         <div class="col-md-6 mb-4">
-            <div class="card">
+            <div class="card stats-card">
                 <div class="card-header">
                     <h5>Autores con Más Libros</h5>
                 </div>
@@ -32,7 +44,7 @@
         </div>
 
         <div class="col-md-6 mb-4">
-            <div class="card">
+            <div class="card stats-card">
                 <div class="card-header">
                     <h5>Préstamos Vencidos</h5>
                 </div>
@@ -60,23 +72,23 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div class="card">
+            <div class="card stats-card">
                 <div class="card-header">
                     <h5>Estado General de la Biblioteca</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            <h3 class="text-primary">{{ total_libros }}</h3>
-                            <p>Total de Libros</p>
+                            <h3 class="text-primary stats-number">{{ total_libros }}</h3>
+                            <p class="stats-label">Total de Libros</p>
                         </div>
                         <div class="col-md-4 text-center">
-                            <h3 class="text-success">{{ libros_disponibles }}</h3>
-                            <p>Libros Disponibles</p>
+                            <h3 class="text-success stats-number">{{ libros_disponibles }}</h3>
+                            <p class="stats-label">Libros Disponibles</p>
                         </div>
                         <div class="col-md-4 text-center">
-                            <h3 class="text-warning">{{ prestamos_activos }}</h3>
-                            <p>Préstamos Activos</p>
+                            <h3 class="text-warning stats-number">{{ prestamos_activos }}</h3>
+                            <p class="stats-label">Préstamos Activos</p>
                         </div>
                     </div>
                 </div>
@@ -84,4 +96,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'biblioteca/js/estadisticas.js' %}"></script>
 {% endblock %}
