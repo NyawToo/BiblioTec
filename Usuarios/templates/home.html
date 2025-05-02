@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="jumbotron bg-light p-5 rounded">
+                <h1 class="display-4">Bienvenido a la Biblioteca</h1>
+                <p class="lead">Explora nuestra colección de libros, realiza préstamos y gestiona tus lecturas.</p>
+                {% if not user.is_authenticated %}
+                <hr class="my-4">
+                <p>Para acceder a todas las funcionalidades, inicia sesión o regístrate.</p>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Iniciar Sesión</a>
+                    <a class="btn btn-outline-primary btn-lg" href="{% url 'registro' %}" role="button">Registrarse</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>Libros Recientes</h2>
+            <div class="row">
+                {% for libro in libros_recientes %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ libro.titulo }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {% for autor in libro.autores.all %}
+                                {{ autor }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </h6>
+                            <p class="card-text">{{ libro.descripcion|truncatewords:30 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-{% if libro.estado == 'DISPONIBLE' %}success{% else %}warning{% endif %}">
+                                    {{ libro.get_estado_display }}
+                                </span>
+                                <a href="{% url 'detalle_libro' libro.id %}" class="btn btn-primary btn-sm">Ver Detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-muted">No hay libros disponibles en este momento.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Buscar Libros</h5>
+                    <p class="card-text">Encuentra libros por título, autor o categoría.</p>
+                    <a href="{% url 'buscar_libros' %}" class="btn btn-primary">Ir a Búsqueda</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Mis Préstamos</h5>
+                    <p class="card-text">Gestiona tus préstamos activos y revisa tu historial.</p>
+                    <a href="{% url 'mis_prestamos' %}" class="btn btn-primary">Ver Préstamos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
