@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ libro.titulo }} - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">{{ libro.titulo }}</h2>
+                    <div class="mb-3">
+                        <h6 class="text-muted">Autores:</h6>
+                        {% for autor in libro.autores.all %}
+                        <span class="badge bg-secondary">{{ autor }}</span>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <p><strong>ISBN:</strong> {{ libro.isbn }}</p>
+                        <p><strong>Categoría:</strong> {{ libro.get_categoria_display }}</p>
+                        <p><strong>Fecha de Publicación:</strong> {{ libro.fecha_publicacion }}</p>
+                        <p><strong>Estado:</strong> 
+                            <span class="badge bg-{% if libro.estado == 'DISPONIBLE' %}success{% else %}warning{% endif %}">
+                                {{ libro.get_estado_display }}
+                            </span>
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>Descripción:</h6>
+                        <p>{{ libro.descripcion }}</p>
+                    </div>
+
+                    {% if libro.estado == 'DISPONIBLE' and user.is_authenticated %}
+                    <form method="post" action="{% url 'prestar_libro' libro.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Solicitar Préstamo</button>
+                    </form>
+                    {% elif not user.is_authenticated %}
+                    <div class="alert alert-info">
+                        <a href="{% url 'login' %}">Inicia sesión</a> para solicitar préstamos.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        Este libro no está disponible actualmente.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if user.is_authenticated and prestamos_activos %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Historial de Préstamos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                    {% for prestamo in prestamos_activos %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">Prestado el {{ prestamo.fecha_prestamo|date:"d/m/Y" }}</h6>
+                                <small>Devolución esperada: {{ prestamo.fecha_devolucion_esperada|date:"d/m/Y" }}</small>
+                            </div>
+                            {% if prestamo.esta_vencido %}
+                            <span class="badge bg-danger">Vencido</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

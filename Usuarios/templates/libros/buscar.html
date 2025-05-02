@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Buscar Libros - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2>Buscar Libros</h2>
+            <form method="get" class="mb-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <input type="text" name="q" class="form-control" placeholder="Buscar por título, autor o ISBN" value="{{ query }}">
+                    </div>
+                    <div class="col-md-4">
+                        <select name="categoria" class="form-select">
+                            <option value="">Todas las categorías</option>
+                            {% for cat_code, cat_name in categorias %}
+                            <option value="{{ cat_code }}" {% if categoria == cat_code %}selected{% endif %}>
+                                {{ cat_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for libro in libros %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ libro.titulo }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        {% for autor in libro.autores.all %}
+                        {{ autor }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </h6>
+                    <p class="card-text">
+                        <small class="text-muted">ISBN: {{ libro.isbn }}</small><br>
+                        <small class="text-muted">Categoría: {{ libro.get_categoria_display }}</small><br>
+                        {{ libro.descripcion|truncatewords:30 }}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-{% if libro.estado == 'DISPONIBLE' %}success{% else %}warning{% endif %}">
+                            {{ libro.get_estado_display }}
+                        </span>
+                        <a href="{% url 'detalle_libro' libro.id %}" class="btn btn-primary btn-sm">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No se encontraron libros que coincidan con tu búsqueda.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
