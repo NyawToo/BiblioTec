@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0"><i class="fas fa-user-edit me-2"></i>Editar Usuario</h1>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="messages mb-3">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nombre de usuario</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ form.username.value }}" {% if form.username.field.disabled %}disabled{% endif %}>
+                            {% if form.username.errors %}
+                            <div class="invalid-feedback d-block">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ form.first_name.value|default:'' }}">
+                                {% if form.first_name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">Apellidos</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ form.last_name.value|default:'' }}">
+                                {% if form.last_name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ form.email.value|default:'' }}">
+                            {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion" value="{{ form.direccion.value|default:'' }}">
+                            {% if form.direccion.errors %}
+                            <div class="invalid-feedback d-block">{{ form.direccion.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono" value="{{ form.telefono.value|default:'' }}">
+                            {% if form.telefono.errors %}
+                            <div class="invalid-feedback d-block">{{ form.telefono.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="mb-3">Preferencias de Notificaciones</h5>
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" id="notificacion_prestamo" name="notificacion_prestamo" {% if form.notificacion_prestamo.value %}checked{% endif %}>
+                                <label class="form-check-label" for="notificacion_prestamo">Notificaciones de préstamos</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" id="notificacion_vencimiento" name="notificacion_vencimiento" {% if form.notificacion_vencimiento.value %}checked{% endif %}>
+                                <label class="form-check-label" for="notificacion_vencimiento">Notificaciones de vencimiento</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="notificacion_devolucion" name="notificacion_devolucion" {% if form.notificacion_devolucion.value %}checked{% endif %}>
+                                <label class="form-check-label" for="notificacion_devolucion">Notificaciones de devolución</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'gestionar_usuarios' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Volver
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

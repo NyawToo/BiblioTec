@@ -12,4 +12,8 @@ urlpatterns = [
     path('estadisticas/', views.estadisticas, name='estadisticas'),
     path('prestar/<int:libro_id>/', views.prestar_libro, name='prestar_libro'),
     path('devolver/<int:prestamo_id>/', views.devolver_libro, name='devolver_libro'),
+    # Rutas para gestión de usuarios
+    path('usuarios/', views.gestionar_usuarios, name='gestionar_usuarios'),
+    path('usuarios/editar/<int:user_id>/', views.editar_usuario, name='editar_usuario'),
+    path('usuarios/eliminar/<int:user_id>/', views.eliminar_usuario, name='eliminar_usuario'),
 ]
