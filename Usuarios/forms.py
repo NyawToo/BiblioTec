@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django import forms
 from .models import Usuario
 
 class UsuarioForm(UserCreationForm):
@@ -21,10 +20,46 @@ class UsuarioForm(UserCreationForm):
         initial='USUARIO',
         widget=forms.Select(attrs={'class': 'form-select'})
     )
+    notificacion_prestamo = forms.BooleanField(required=False, initial=True)
+    notificacion_vencimiento = forms.BooleanField(required=False, initial=True)
+    notificacion_devolucion = forms.BooleanField(required=False, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'data' in kwargs and kwargs['data'].get('role') == 'BIBLIOTECARIO':
+            self.fields['notificacion_prestamo'].widget = forms.HiddenInput()
+            self.fields['notificacion_vencimiento'].widget = forms.HiddenInput()
+            self.fields['notificacion_devolucion'].widget = forms.HiddenInput()
+            self.fields['notificacion_prestamo'].initial = False
+            self.fields['notificacion_vencimiento'].initial = False
+            self.fields['notificacion_devolucion'].initial = False
 
     class Meta(UserCreationForm.Meta):
         model = Usuario
         fields = UserCreationForm.Meta.fields + ('email', 'direccion', 'telefono', 'role')
+
+class EditarUsuarioForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = [
+            'username', 'first_name', 'last_name', 'email',
+            'direccion', 'telefono',
+            'notificacion_prestamo', 'notificacion_vencimiento', 'notificacion_devolucion'
+        ]
+        widgets = {
+            'username': forms.TextInput(attrs={'readonly': True})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Hacer el campo username de solo lectura
+        self.fields['username'].disabled = True
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and Usuario.objects.exclude(pk=self.instance.pk).filter(email=email).exists():
+            raise forms.ValidationError('Este correo electrónico ya está registrado.')
+        return email
 
     def clean(self):
         cleaned_data = super().clean()

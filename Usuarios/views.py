@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
 from .models import Usuario
 from libros.models import Libro, Autor, Prestamo
-from .forms import UsuarioForm, NotificacionesForm
+from .forms import UsuarioForm, NotificacionesForm, EditarUsuarioForm
 
 def home(request):
     if request.user.is_authenticated:
@@ -141,3 +142,43 @@ def configurar_notificaciones(request):
         form = NotificacionesForm(instance=request.user)
     
     return render(request, 'usuarios/configuracion_notificaciones.html', {'form': form})
+
+def is_admin(user):
+    return user.is_superuser
+
+@login_required
+@user_passes_test(is_admin)
+def gestionar_usuarios(request):
+    usuarios = Usuario.objects.all().order_by('username')
+    return render(request, 'usuarios/gestionar_usuarios.html', {'usuarios': usuarios})
+
+@login_required
+@user_passes_test(is_admin)
+def editar_usuario(request, user_id):
+    usuario = get_object_or_404(Usuario, id=user_id)
+    if usuario.is_superuser:
+        messages.error(request, 'No se puede editar un usuario administrador.')
+        return redirect('gestionar_usuarios')
+
+    if request.method == 'POST':
+        form = EditarUsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Usuario actualizado correctamente.')
+            return redirect('gestionar_usuarios')
+    else:
+        form = EditarUsuarioForm(instance=usuario)
+
+    return render(request, 'usuarios/editar_usuario.html', {'form': form, 'usuario': usuario})
+
+@login_required
+@user_passes_test(is_admin)
+def eliminar_usuario(request, user_id):
+    if request.method == 'POST':
+        usuario = get_object_or_404(Usuario, id=user_id)
+        if usuario.is_superuser or usuario.is_staff:
+            messages.error(request, 'No se puede eliminar un usuario administrador o bibliotecario.')
+        else:
+            usuario.delete()
+            messages.success(request, 'Usuario eliminado correctamente.')
+    return redirect('gestionar_usuarios')
