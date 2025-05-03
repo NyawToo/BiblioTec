@@ -19,6 +19,11 @@ def lista_libros(request):
     return render(request, 'libros/lista_libros.html', {'libros': libros})
 
 @login_required
+def ver_libro(request, libro_id):
+    libro = get_object_or_404(Libro, id=libro_id)
+    return render(request, 'libros/detalle_libro.html', {'libro': libro})
+
+@login_required
 @user_passes_test(lambda u: u.is_staff)
 def crear_libro(request):
     if request.method == 'POST':
@@ -26,7 +31,7 @@ def crear_libro(request):
         if form.is_valid():
             libro = form.save()
             messages.success(request, 'Libro creado exitosamente.')
-            return redirect('detalle_libro', libro_id=libro.id)
+            return redirect('lista_libros')
     else:
         form = LibroForm()
     return render(request, 'libros/libro_form.html', {'form': form, 'action': 'Crear'})
@@ -40,13 +45,13 @@ def editar_libro(request, libro_id):
         if form.is_valid():
             libro = form.save()
             messages.success(request, 'Libro actualizado exitosamente.')
-            return redirect('detalle_libro', libro_id=libro.id)
+            return redirect('lista_libros')
     else:
         form = LibroForm(instance=libro)
     return render(request, 'libros/libro_form.html', {'form': form, 'libro': libro, 'action': 'Editar'})
 
 @login_required
-def detalle_libro(request, libro_id):
+def ver_libro(request, libro_id):
     libro = get_object_or_404(Libro, id=libro_id)
     return render(request, 'libros/detalle_libro.html', {'libro': libro})
 
@@ -97,8 +102,15 @@ def gestionar_autores(request):
 @user_passes_test(lambda u: u.is_staff)
 def gestionar_categorias(request):
     categorias = Categoria.objects.all().order_by('nombre')
-    form = CategoriaForm()
-    return render(request, 'libros/gestionar_categorias.html', {'categorias': categorias, 'form': form})
+    form_categoria = CategoriaForm()
+    forms_edicion = {}
+    for categoria in categorias:
+        forms_edicion[categoria.id] = CategoriaForm(instance=categoria)
+    return render(request, 'libros/gestionar_categorias.html', {
+        'categorias': categorias,
+        'form_categoria': form_categoria,
+        'forms_edicion': forms_edicion
+    })
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
@@ -166,8 +178,8 @@ def crear_categoria(request):
         form = CategoriaForm(request.POST)
         if form.is_valid():
             categoria = form.save()
-            messages.success(request, 'Categoría creada exitosamente.')
-            return redirect('lista_categorias')
+            messages.success(request, 'La categoría se ha creado correctamente.')
+            return redirect('gestionar_categorias')
     else:
         form = CategoriaForm()
     return render(request, 'libros/categoria_form.html', {'form': form, 'action': 'Crear'})
@@ -180,8 +192,8 @@ def editar_categoria(request, categoria_id):
         form = CategoriaForm(request.POST, instance=categoria)
         if form.is_valid():
             categoria = form.save()
-            messages.success(request, 'Categoría actualizada exitosamente.')
-            return redirect('lista_categorias')
+            messages.success(request, 'La categoría se ha actualizado correctamente.')
+            return redirect('gestionar_categorias')
     else:
         form = CategoriaForm(instance=categoria)
     return render(request, 'libros/categoria_form.html', {'form': form, 'categoria': categoria, 'action': 'Editar'})
@@ -192,14 +204,14 @@ def eliminar_categoria(request, categoria_id):
     categoria = get_object_or_404(Categoria, id=categoria_id)
     if request.method == 'POST':
         categoria.delete()
-        messages.success(request, 'Categoría eliminada exitosamente.')
-        return redirect('lista_categorias')
+        messages.success(request, 'La categoría se ha eliminado correctamente.')
+        return redirect('gestionar_categorias')
     return render(request, 'libros/confirmar_eliminar.html', {'categoria': categoria})
 
 @login_required
 def registrar_prestamo(request, libro_id):
     libro = get_object_or_404(Libro, id=libro_id)
-    if not libro.disponible:
+    if libro.estado != 'DISPONIBLE':
         messages.error(request, 'Este libro no está disponible actualmente.')
         return redirect('lista_libros')
     
@@ -208,7 +220,7 @@ def registrar_prestamo(request, libro_id):
         usuario=request.user,
         fecha_devolucion_esperada=date.today() + timedelta(days=14)
     )
-    libro.disponible = False
+    libro.estado = 'PRESTADO'
     libro.save()
     
     # Enviar notificación de confirmación
@@ -216,13 +228,31 @@ def registrar_prestamo(request, libro_id):
     messages.success(request, 'Préstamo registrado exitosamente.')
     return redirect('lista_prestamos')
 
+from django.utils import timezone
+
 @login_required
-def lista_prestamos_activos(request):
+def lista_prestamos(request):
+    # Filtrar préstamos según el rol del usuario
     if request.user.is_staff:
-        prestamos = Prestamo.objects.filter(devuelto=False)
+        # Los bibliotecarios ven todos los préstamos activos
+        prestamos = Prestamo.objects.filter(devuelto=False).order_by('fecha_devolucion_esperada')
     else:
-        prestamos = Prestamo.objects.filter(usuario=request.user, devuelto=False)
-    return render(request, 'libros/lista_prestamos.html', {'prestamos': prestamos})
+        # Los usuarios normales solo ven sus propios préstamos
+        prestamos = Prestamo.objects.filter(usuario=request.user, devuelto=False).order_by('fecha_devolucion_esperada')
+    
+    # Calcular la fecha actual para comparaciones
+    now = timezone.now().date()
+    
+    return render(request, 'libros/lista_prestamos.html', {
+        'prestamos': prestamos,
+        'now': now
+    })
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def lista_prestamos_activos(request):
+    # This view is an alias to lista_prestamos for backward compatibility
+    return lista_prestamos(request)
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
@@ -231,7 +261,7 @@ def devolver_libro(request, prestamo_id):
     prestamo.devuelto = True
     prestamo.fecha_devolucion_real = date.today()
     prestamo.save()
-    prestamo.libro.disponible = True
+    prestamo.libro.estado = 'DISPONIBLE'
     prestamo.libro.save()
     messages.success(request, 'Libro devuelto exitosamente.')
     return redirect('lista_prestamos')
@@ -241,7 +271,8 @@ def devolver_libro(request, prestamo_id):
 def dashboard(request):
     # Estadísticas generales
     total_libros = Libro.objects.count()
-    libros_disponibles = Libro.objects.filter(disponible=True).count()
+    libros_disponibles = Libro.objects.filter(estado='DISPONIBLE').count()
+    libros_prestados = Libro.objects.filter(estado='PRESTADO').count()
     prestamos_activos = Prestamo.objects.filter(devuelto=False).count()
     prestamos_vencidos = Prestamo.objects.filter(
         devuelto=False,
