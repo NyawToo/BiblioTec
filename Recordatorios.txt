@@ -21,13 +21,17 @@ Consulta avanzada de autor con más libros en la biblioteca, del que más tiene 
 
 ________________________________________________________________________________________________________________________________________________________________CODIGO DE AUTH: "NYAW123456789" solo valido bajo ciertos parametros
 
-- Fixeadas varias zonas completo 60% falta zona para asignar prestamos a usuarios, teniendo un filtro 
+- Fixeadas varias zonas completo 60% falta:
+- Zona para asignar prestamos a usuarios, teniendo un filtro 
 para busqueda de datos y que se puedan ver fechas de prestado 
 y vencimiento y en colores el estado actual del libro. (posible revision de inventario de libros)
+y boton para el prestamo
+- visualizacion de libros sin iniciar sesion pero solicitar iniciar si se
+pide un prestamo
 - Revizar cierre de sesion en entorno host porque sale error de pagina no funcional.. como si no funcionara 
 pero en local si es funcional 
 - Ajustar la apariencia a algo uniforme y mas agradable al usuario
-
+- Mostrar la imagen en la zona de la lista de libros
 
 Preguntar:
 El usuario puede cambiar su informacion personal? porque si tiene libro en prestamo podria haber 
