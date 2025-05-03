@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Dashboard de Biblioteca</h2>
+    
+    <div class="row">
+        <!-- Estadísticas Generales -->
+        <div class="col-md-3 mb-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Libros</h5>
+                    <h2 class="mb-0">{{ total_libros }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Libros Disponibles</h5>
+                    <h2 class="mb-0">{{ libros_disponibles }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Préstamos Activos</h5>
+                    <h2 class="mb-0">{{ prestamos_activos }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Préstamos Vencidos</h5>
+                    <h2 class="mb-0">{{ prestamos_vencidos }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Libros Más Prestados -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Libros Más Prestados</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Autor</th>
+                                    <th>Préstamos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for libro in libros_mas_prestados %}
+                                <tr>
+                                    <td>{{ libro.titulo }}</td>
+                                    <td>{{ libro.autor }}</td>
+                                    <td>{{ libro.total_prestamos }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usuarios Más Activos -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Usuarios Más Activos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Préstamos Totales</th>
+                                    <th>Préstamos Activos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for usuario in usuarios_mas_activos %}
+                                <tr>
+                                    <td>{{ usuario.username }}</td>
+                                    <td>{{ usuario.total_prestamos }}</td>
+                                    <td>{{ usuario.prestamos_activos }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Préstamos por Categoría -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Préstamos por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="prestamos-categoria"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Gráfico de Préstamos por Categoría
+    const ctxCategoria = document.getElementById('prestamos-categoria').getContext('2d');
+    new Chart(ctxCategoria, {
+        type: 'bar',
+        data: {
+            labels: {{ categorias_labels|safe }},
+            datasets: [{
+                label: 'Número de Préstamos',
+                data: {{ categorias_data|safe }},
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

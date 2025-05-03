@@ -1,0 +1,28 @@
+{% extends "email/base_email.html" %}
+
+{% block content %}
+<h2>{{ titulo }}</h2>
+
+<p>Estimado/a {{ usuario_nombre }},</p>
+
+{% if dias_restantes > 0 %}
+<p>Le recordamos que el préstamo del libro "<strong>{{ libro_titulo }}</strong>" vence en {{ dias_restantes }} días.</p>
+<p>Por favor, asegúrese de devolverlo antes del <strong>{{ fecha_devolucion }}</strong>.</p>
+{% else %}
+<p>El préstamo del libro "<strong>{{ libro_titulo }}</strong>" está vencido por {{ dias_vencidos }} días.</p>
+<p>Por favor, devuelva el libro lo antes posible para evitar sanciones.</p>
+{% endif %}
+
+<div style="text-align: center;">
+    <h3>Detalles del Préstamo</h3>
+    <p><strong>Libro:</strong> {{ libro_titulo }}</p>
+    <p><strong>Autor:</strong> {{ libro_autor }}</p>
+    <p><strong>Fecha de préstamo:</strong> {{ fecha_prestamo }}</p>
+    <p><strong>Fecha de devolución:</strong> {{ fecha_devolucion }}</p>
+</div>
+
+<p>Si ya ha devuelto el libro, por favor ignore este mensaje.</p>
+
+<p>Saludos cordiales,<br>
+BiblioTec</p>
+{% endblock %}

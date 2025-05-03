@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Biblioteca</title>
+    <title>{% block title %}Sistema de Biblioteca{% endblock %}</title>
+    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN5sTIzt686VpXFZWflso3zjxwihgHjq8jpA&s">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    {% load static %}
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -19,14 +23,28 @@
                         <a class="nav-link" href="{% url 'lista_libros' %}">Libros</a>
                     </li>
                     {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'panel_admin' %}">Panel Admin</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'registrar_bibliotecario' %}">Registrar Bibliotecario</a>
+                            </li>
+                        {% endif %}
+                        {% if user.is_staff %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'gestionar_autores' %}">Gestionar Autores</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'gestionar_categorias' %}">Gestionar Categorías</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'lista_prestamos' %}">Mis Préstamos</a>
                         </li>
-                        {% if user.is_staff %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'autores_mas_libros' %}">Estadísticas</a>
-                            </li>
-                        {% endif %}
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -40,6 +58,9 @@
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">Iniciar Sesión</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-success btn-sm" href="{% url 'registro' %}">Registrarse</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -60,5 +81,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% load static %}
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Bienvenido, {{ user.get_full_name|default:user.username }}</h1>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Tus Préstamos Activos</h3>
+                </div>
+                <div class="card-body">
+                    {% if prestamos_activos %}
+                        <ul class="list-group">
+                        {% for prestamo in prestamos_activos %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ prestamo.libro.titulo }}
+                                <span class="badge bg-primary rounded-pill">
+                                    Vence: {{ prestamo.fecha_devolucion_esperada|date:"d/m/Y" }}
+                                </span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No tienes préstamos activos.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Libros Disponibles</h3>
+                </div>
+                <div class="card-body">
+                    {% if libros %}
+                        <div class="list-group">
+                        {% for libro in libros %}
+                            {% if libro.estado == 'DISPONIBLE' %}
+                                <a href="{% url 'detalle_libro' libro.id %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ libro.titulo }}</h5>
+                                        <small>{{ libro.autor }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ libro.descripcion|truncatewords:20 }}</p>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No hay libros disponibles en este momento.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'buscar_libros' %}" class="btn btn-primary">Buscar Más Libros</a>
+    </div>
+</div>
+{% endblock %}

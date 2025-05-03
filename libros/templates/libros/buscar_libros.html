@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Búsqueda de Libros</h2>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="mb-4">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <input type="text" name="q" class="form-control" placeholder="Buscar por título..." value="{{ request.GET.q }}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <select name="autor" class="form-control">
+                            <option value="">Seleccionar Autor</option>
+                            {% for autor in autores %}
+                            <option value="{{ autor.id }}" {% if request.GET.autor == autor.id|stringformat:"i" %}selected{% endif %}>
+                                {{ autor.nombre }} {{ autor.apellido }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <select name="categoria" class="form-control">
+                            <option value="">Seleccionar Categoría</option>
+                            {% for categoria in categorias %}
+                            <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"i" %}selected{% endif %}>
+                                {{ categoria.nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <button type="submit" class="btn btn-primary w-100">Buscar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if libros %}
+            {% for libro in libros %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ libro.titulo }}</h5>
+                        <p class="card-text">
+                            <strong>Autor:</strong> {{ libro.autor }}<br>
+                            <strong>Categoría:</strong> {{ libro.categoria }}<br>
+                            <strong>ISBN:</strong> {{ libro.isbn }}<br>
+                            <strong>Estado:</strong> 
+                            {% if libro.disponible %}
+                                <span class="badge bg-success">Disponible</span>
+                            {% else %}
+                                <span class="badge bg-danger">No Disponible</span>
+                            {% endif %}
+                        </p>
+                        {% if libro.disponible and user.is_authenticated %}
+                        <form action="{% url 'registrar_prestamo' libro.id %}" method="POST" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm">Solicitar Préstamo</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No se encontraron libros que coincidan con tu búsqueda.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
