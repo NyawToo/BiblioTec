@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Registro de Usuario</h3>
+                </div>
+                <div class="card-body">
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            Por favor, corrige los siguientes errores:
+                            {{ form.errors }}
+                        </div>
+                    {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="{{ form.username.id_for_label }}">Nombre de Usuario:</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback d-block">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.email.id_for_label }}">Correo Electrónico:</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.password1.id_for_label }}">Contraseña:</label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback d-block">{{ form.password1.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.password2.id_for_label }}">Confirmar Contraseña:</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback d-block">{{ form.password2.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.direccion.id_for_label }}">Dirección:</label>
+                            {{ form.direccion }}
+                            {% if form.direccion.errors %}
+                                <div class="invalid-feedback d-block">{{ form.direccion.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.telefono.id_for_label }}">Teléfono:</label>
+                            {{ form.telefono }}
+                            {% if form.telefono.errors %}
+                                <div class="invalid-feedback d-block">{{ form.telefono.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="{{ form.role.id_for_label }}">Tipo de Usuario:</label>
+                            {{ form.role }}
+                        </div>
+                        <div class="form-group mb-3" id="codigo-auth-group">
+                            <label for="{{ form.codigo_autenticacion.id_for_label }}">Código de Autenticación (requerido para bibliotecarios):</label>
+                            {{ form.codigo_autenticacion }}
+                            {% if form.codigo_autenticacion.errors %}
+                                <div class="invalid-feedback d-block">{{ form.codigo_autenticacion.errors }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">{{ form.codigo_autenticacion.help_text }}</small>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="text-center">
+                        <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roleSelect = document.getElementById('id_role');
+    const codigoGroup = document.getElementById('codigo-auth-group');
+
+    function toggleCodigoAutenticacion() {
+        const selectedRole = roleSelect.value;
+        codigoGroup.style.display = selectedRole === 'BIBLIOTECARIO' ? 'block' : 'none';
+    }
+
+    roleSelect.addEventListener('change', toggleCodigoAutenticacion);
+    toggleCodigoAutenticacion();
+});
+</script>
+{% endblock %}

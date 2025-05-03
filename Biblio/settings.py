@@ -37,13 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'libros',  # Asegúrate de que esta línea esté presente
+    'libros',
+    'Usuarios',
 ]
 
-# También asegúrate de que estas configuraciones estén presentes
+# Configuraciones de autenticación
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'lista_libros'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+LOGOUT_REDIRECT_URL = 'home'
+
+# Configuración del modelo de usuario personalizado
+AUTH_USER_MODEL = 'Usuarios.Usuario'
 
 TEMPLATES = [
     {

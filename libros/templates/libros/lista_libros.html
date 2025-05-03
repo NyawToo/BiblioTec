@@ -1,53 +1,80 @@
-{% extends 'libros/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="page-header text-center">
-    <h1 class="display-4">Catálogo de Libros</h1>
-    <p class="lead">Explora nuestra colección de libros disponibles</p>
-</div>
-
-<div class="row g-4">
-    {% for libro in libros %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-primary">{{ libro.titulo }}</h5>
-                    <div class="card-text">
-                        <p class="mb-2">
-                            <i class="fas fa-user-edit me-2"></i>
-                            <strong>Autor:</strong> {{ libro.autor }}
-                        </p>
-                        <p class="mb-2">
-                            <i class="fas fa-bookmark me-2"></i>
-                            <strong>Categoría:</strong> {{ libro.categoria }}
-                        </p>
-                        <p class="mb-2">
-                            <i class="fas fa-barcode me-2"></i>
-                            <strong>ISBN:</strong> {{ libro.isbn }}
-                        </p>
-                        <p class="mb-3">
-                            <i class="fas fa-circle {% if libro.disponible %}text-success{% else %}text-danger{% endif %} me-2"></i>
-                            <strong>Estado:</strong> 
-                            <span class="badge {% if libro.disponible %}bg-success{% else %}bg-danger{% endif %}">
-                                {% if libro.disponible %}Disponible{% else %}Prestado{% endif %}
-                            </span>
-                        </p>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Catálogo de Libros</h2>
+        <div>
+            {% if user.is_staff %}
+            <a href="{% url 'crear_libro' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Agregar Libro
+            </a>
+            {% endif %}
+            <a href="{% url 'buscar_libros' %}" class="btn btn-outline-primary ms-2">
+                <i class="fas fa-search"></i> Búsqueda Avanzada
+            </a>
+            <a href="{% url 'autores_mas_libros' %}" class="btn btn-outline-info ms-2">
+                <i class="fas fa-chart-bar"></i> Estadísticas de Autores
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        {% if libros %}
+            {% for libro in libros %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ libro.titulo }}</h5>
+                        <div class="card-text">
+                            <p>
+                                <strong><i class="fas fa-user"></i> Autor:</strong> {{ libro.autor }}<br>
+                                <strong><i class="fas fa-bookmark"></i> Categoría:</strong> {{ libro.categoria }}<br>
+                                <strong><i class="fas fa-barcode"></i> ISBN:</strong> {{ libro.isbn }}<br>
+                                <strong><i class="fas fa-calendar"></i> Publicación:</strong> {{ libro.fecha_publicacion }}
+                            </p>
+                            <div class="mt-2">
+                                <strong><i class="fas fa-info-circle"></i> Estado:</strong>
+                                {% if libro.disponible %}
+                                    <span class="badge bg-success">Disponible</span>
+                                {% else %}
+                                    <span class="badge bg-danger">No Disponible</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    {% if user.is_authenticated and libro.disponible %}
-                        <a href="{% url 'registrar_prestamo' libro.id %}" class="btn btn-primary w-100">
-                            <i class="fas fa-book-reader me-2"></i>Solicitar Préstamo
-                        </a>
-                    {% endif %}
+                    <div class="card-footer bg-transparent border-top-0">
+                        {% if user.is_staff %}
+                        <div class="d-flex gap-2 mb-2">
+                            <a href="{% url 'editar_libro' libro.id %}" class="btn btn-warning flex-grow-1">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="{% url 'eliminar_libro' libro.id %}" class="btn btn-danger flex-grow-1">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        </div>
+                        {% elif libro.disponible and user.is_authenticated %}
+                        <form action="{% url 'registrar_prestamo' libro.id %}" method="POST" class="d-grid">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-book"></i> Solicitar Préstamo
+                            </button>
+                        </form>
+                        {% elif not user.is_authenticated %}
+                        <div class="alert alert-info mb-0 text-center">
+                            <small>Inicia sesión para solicitar préstamos</small>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
-    {% empty %}
-        <div class="col-12 text-center">
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i>
-                No hay libros disponibles en este momento.
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> No hay libros disponibles en el catálogo.
+                </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

@@ -4,32 +4,60 @@ from django.contrib.auth import login
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import timedelta
-from .models import Usuario, Libro, Autor, Prestamo
-from .forms import UsuarioForm
+from django.contrib import messages
+from .models import Usuario
+from libros.models import Libro, Autor, Prestamo
+from .forms import UsuarioForm, NotificacionesForm
 
 def home(request):
-    libros_recientes = Libro.objects.filter(estado='DISPONIBLE').order_by('-fecha_adquisicion')[:5]
-    return render(request, 'home.html', {'libros_recientes': libros_recientes})
+    if request.user.is_authenticated:
+        libros = Libro.objects.all()
+        prestamos_activos = Prestamo.objects.filter(usuario=request.user, devuelto=False)
+        return render(request, 'usuarios/dashboard.html', {
+            'libros': libros,
+            'prestamos_activos': prestamos_activos
+        })
+    else:
+        libros_recientes = Libro.objects.filter(estado='DISPONIBLE').order_by('-fecha_creacion')[:5]
+        return render(request, 'home.html', {'libros_recientes': libros_recientes})
 
 def registro(request):
     if request.method == 'POST':
         form = UsuarioForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home')
+            try:
+                user = form.save(commit=False)
+                if user.role == 'BIBLIOTECARIO':
+                    if form.cleaned_data['codigo_autenticacion'] != 'NYAW123456789':
+                        return render(request, 'registration/codigo_invalido.html')
+                user.save()
+                login(request, user)
+                messages.success(request, '¡Registro exitoso!')
+                return redirect('home')
+            except forms.ValidationError as e:
+                messages.error(request, str(e))
     else:
         form = UsuarioForm()
     return render(request, 'registration/registro.html', {'form': form})
 
 @login_required
-def home(request):
-    libros = Libro.objects.all()
-    prestamos_activos = Prestamo.objects.filter(usuario=request.user, devuelto=False)
-    return render(request, 'home.html', {
-        'libros': libros,
-        'prestamos_activos': prestamos_activos
-    })
+def dashboard(request):
+    if request.user.role == 'BIBLIOTECARIO':
+        # Vista para bibliotecarios
+        todos_libros = Libro.objects.all().order_by('titulo')
+        prestamos_activos = Prestamo.objects.filter(devuelto=False).order_by('fecha_devolucion_esperada')
+        return render(request, 'usuarios/dashboard_bibliotecario.html', {
+            'todos_libros': todos_libros,
+            'prestamos_activos': prestamos_activos
+        })
+    else:
+        # Vista para usuarios regulares
+        libros = Libro.objects.all()
+        prestamos_activos = Prestamo.objects.filter(usuario=request.user, devuelto=False)
+        return render(request, 'usuarios/dashboard.html', {
+            'libros': libros,
+            'prestamos_activos': prestamos_activos
+        })
 
 @login_required
 def buscar_libros(request):
@@ -100,3 +128,16 @@ def estadisticas(request):
         'autores_top': autores_top,
         'prestamos_vencidos': prestamos_vencidos
     })
+
+@login_required
+def configurar_notificaciones(request):
+    if request.method == 'POST':
+        form = NotificacionesForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Tus preferencias de notificaciones han sido actualizadas.')
+            return redirect('configurar_notificaciones')
+    else:
+        form = NotificacionesForm(instance=request.user)
+    
+    return render(request, 'usuarios/configuracion_notificaciones.html', {'form': form})

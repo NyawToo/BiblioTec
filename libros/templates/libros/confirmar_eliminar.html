@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Libro - BiblioTec{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title mb-4">¿Estás seguro?</h3>
+                    <p class="card-text">¿Realmente deseas eliminar el libro "{{ libro.titulo }}"?</p>
+                    <p class="text-muted">Esta acción no se puede deshacer.</p>
+                    
+                    <div class="mt-4">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="{% url 'detalle_libro' libro.id %}" class="btn btn-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

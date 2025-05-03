@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Panel de Control - Bibliotecario</h2>
+
+    <!-- Sección de Préstamos Activos -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title h5 mb-0">Préstamos Activos</h3>
+        </div>
+        <div class="card-body">
+            {% if prestamos_activos %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Libro</th>
+                            <th>Usuario</th>
+                            <th>Fecha de Préstamo</th>
+                            <th>Fecha de Vencimiento</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prestamo in prestamos_activos %}
+                        <tr>
+                            <td>{{ prestamo.libro.titulo }}</td>
+                            <td>{{ prestamo.usuario.username }}</td>
+                            <td>{{ prestamo.fecha_prestamo|date:"d/m/Y" }}</td>
+                            <td>{{ prestamo.fecha_devolucion_esperada|date:"d/m/Y" }}</td>
+                            <td>
+                                {% if prestamo.fecha_devolucion_esperada < now %}
+                                <span class="badge bg-danger">Vencido</span>
+                                {% else %}
+                                <span class="badge bg-success">Al día</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'devolver_libro' prestamo.id %}" class="btn btn-sm btn-success">Marcar como devuelto</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No hay préstamos activos en este momento.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Sección de Todos los Libros -->
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h3 class="card-title h5 mb-0">Catálogo de Libros</h3>
+        </div>
+        <div class="card-body">
+            {% if todos_libros %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Autor</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for libro in todos_libros %}
+                        <tr>
+                            <td>{{ libro.titulo }}</td>
+                            <td>{{ libro.autor }}</td>
+                            <td>
+                                {% if libro.disponible %}
+                                <span class="badge bg-success">Disponible</span>
+                                {% else %}
+                                <span class="badge bg-warning text-dark">Prestado</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if libro.disponible %}
+                                <a href="{% url 'prestar_libro' libro.id %}" class="btn btn-sm btn-primary">Prestar</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No hay libros registrados en el sistema.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

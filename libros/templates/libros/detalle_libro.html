@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ libro.titulo }} - BiblioTec{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if libro.imagen %}
+                                <img src="{{ libro.imagen.url }}" class="img-fluid rounded" alt="{{ libro.titulo }}">
+                            {% elif libro.imagen_url %}
+                                <img src="{{ libro.imagen_url }}" class="img-fluid rounded" alt="{{ libro.titulo }}">
+                            {% else %}
+                                <div class="text-center p-4 bg-light rounded">
+                                    <i class="fas fa-book fa-4x text-secondary"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h2 class="card-title">{{ libro.titulo }}</h2>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                Por {{ libro.autor.nombre }} {{ libro.autor.apellido }}
+                            </h6>
+                            <p class="card-text mt-3">{{ libro.descripcion }}</p>
+                            <div class="mt-3">
+                                <p><strong>ISBN:</strong> {{ libro.isbn }}</p>
+                                <p><strong>Categoría:</strong> {{ libro.categoria.nombre }}</p>
+                                <p><strong>Fecha de Publicación:</strong> {{ libro.fecha_publicacion }}</p>
+                                <p><strong>Estado:</strong> 
+                                    <span class="badge bg-{% if libro.estado == 'DISPONIBLE' %}success{% else %}warning{% endif %}">
+                                        {{ libro.get_estado_display }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if user.is_staff %}
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'lista_libros' %}" class="btn btn-secondary">Volver</a>
+                        <div>
+                            <a href="{% url 'editar_libro' libro.id %}" class="btn btn-primary">Editar</a>
+                            <a href="{% url 'eliminar_libro' libro.id %}" class="btn btn-danger">Eliminar</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

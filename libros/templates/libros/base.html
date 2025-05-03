@@ -51,15 +51,39 @@
                         </a>
                     </li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'lista_prestamos' %}">
-                                <i class="fas fa-clipboard-list me-1"></i>Mis Préstamos
-                            </a>
-                        </li>
                         {% if user.is_staff %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-cog me-1"></i>Gestión Biblioteca
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'crear_libro' %}">
+                                            <i class="fas fa-book-medical me-2"></i>Añadir Libro
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'gestionar_autores' %}">
+                                            <i class="fas fa-users me-2"></i>Gestionar Autores
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'gestionar_categorias' %}">
+                                            <i class="fas fa-tags me-2"></i>Gestionar Categorías
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'panel_admin' %}">
+                                            <i class="fas fa-tachometer-alt me-2"></i>Panel de Control
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'admin:index' %}">
-                                    <i class="fas fa-cog me-1"></i>Administración
+                                <a class="nav-link" href="{% url 'lista_prestamos' %}">
+                                    <i class="fas fa-clipboard-list me-1"></i>Mis Préstamos
                                 </a>
                             </li>
                         {% endif %}
@@ -79,7 +103,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">
+                            <a class="nav-link" href="{% url 'registro' %}">
                                 <i class="fas fa-user-plus me-1"></i>Registrarse
                             </a>
                         </li>
