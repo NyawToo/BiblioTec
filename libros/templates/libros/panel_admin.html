@@ -23,8 +23,7 @@
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-user-edit me-2"></i>Gestión de Autores</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{% url 'lista_autores' %}" class="btn btn-outline-primary w-100"><i class="fas fa-list me-2"></i>Ver Todos los Autores</a></li>
-                        <li class="mb-2"><a href="{% url 'crear_autor' %}" class="btn btn-outline-success w-100"><i class="fas fa-plus me-2"></i>Añadir Nuevo Autor</a></li>
+                        <li class="mb-2"><a href="{% url 'gestionar_autores' %}" class="btn btn-outline-primary w-100"><i class="fas fa-list me-2"></i>Gestionar Autores</a></li>
                     </ul>
                 </div>
             </div>
@@ -36,8 +35,7 @@
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-tags me-2"></i>Gestión de Categorías</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{% url 'lista_categorias' %}" class="btn btn-outline-primary w-100"><i class="fas fa-list me-2"></i>Ver Todas las Categorías</a></li>
-                        <li class="mb-2"><a href="{% url 'crear_categoria' %}" class="btn btn-outline-success w-100"><i class="fas fa-plus me-2"></i>Añadir Nueva Categoría</a></li>
+                        <li class="mb-2"><a href="{% url 'gestionar_categorias' %}" class="btn btn-outline-primary w-100"><i class="fas fa-list me-2"></i>Gestionar Categorías</a></li>
                     </ul>
                 </div>
             </div>
@@ -61,6 +59,7 @@
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-chart-bar me-2"></i>Estadísticas</h5>
                     <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'dashboard' %}" class="btn btn-outline-info w-100"><i class="fas fa-chart-line me-2"></i>Dashboard</a></li>
                         <li class="mb-2"><a href="{% url 'autores_mas_libros' %}" class="btn btn-outline-info w-100"><i class="fas fa-trophy me-2"></i>Ranking de Autores</a></li>
                     </ul>
                 </div>

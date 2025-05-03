@@ -13,6 +13,12 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'lista_libros'
 LOGOUT_REDIRECT_URL = 'login'
 
+# Configuración de autenticación
+AUTH_USER_MODEL = 'auth.User'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 DATABASES = {
     'default': {
