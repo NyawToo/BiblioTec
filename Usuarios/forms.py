@@ -20,6 +20,19 @@ class UsuarioForm(UserCreationForm):
         initial='USUARIO',
         widget=forms.Select(attrs={'class': 'form-select'})
     )
+    notificacion_prestamo = forms.BooleanField(required=False, initial=True)
+    notificacion_vencimiento = forms.BooleanField(required=False, initial=True)
+    notificacion_devolucion = forms.BooleanField(required=False, initial=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'data' in kwargs and kwargs['data'].get('role') == 'BIBLIOTECARIO':
+            self.fields['notificacion_prestamo'].widget = forms.HiddenInput()
+            self.fields['notificacion_vencimiento'].widget = forms.HiddenInput()
+            self.fields['notificacion_devolucion'].widget = forms.HiddenInput()
+            self.fields['notificacion_prestamo'].initial = False
+            self.fields['notificacion_vencimiento'].initial = False
+            self.fields['notificacion_devolucion'].initial = False
 
     class Meta(UserCreationForm.Meta):
         model = Usuario
