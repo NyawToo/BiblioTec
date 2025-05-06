@@ -19,7 +19,7 @@ Consulta avanzada de autor con más libros en la biblioteca, del que más tiene 
 -Código fuente en github 
 -Scripts de ORM
 
-________________________________________________________________________________________________________________________________________________________________CODIGO DE AUTH: "NYAW123456789" solo valido bajo ciertos parametros
+________________________________________________________________________________________________________________________________________________________________________________________________________________________________CODIGO DE AUTH: "NYAW123456789" solo valido bajo ciertos parametros
 
 - Fixeadas varias zonas completo 60% falta zona para asignar prestamos a usuarios, teniendo un filtro 
 para busqueda de datos y que se puedan ver fechas de prestado 

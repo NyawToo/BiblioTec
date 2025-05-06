@@ -22,11 +22,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'lista_libros' %}">Libros</a>
                     </li>
-                    {% if not user.is_staff %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'lista_prestamos' %}">Mis Préstamos</a>
-                    </li>
-                    {% endif %}
                     {% if user.is_authenticated %}
                         {% if user.is_superuser %}
                             <li class="nav-item">
@@ -42,6 +37,9 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'gestionar_categorias' %}">Gestionar Categorías</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'lista_prestamos' %}">Préstamos</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
