@@ -1,5 +1,13 @@
-Ejercicio consiste en desarrollar un sistema de gestion de biblioteca utilizando ORM debe permitir registrar libros, buscador de libros por autor y categoria, python sql puede ser django , modelado de datos debe tener libro dato usuario y prestamo, funcionalidades a imprementar son la crud basica de libros autores y usuario, busquedas por titulo por autor, la gestion de prestamos debe ser registrar el prestamo asociar el libro al usuario y las fechas, se debe marcar un libro como devuelto y se debe poder listar o ver los prestamos del momento, debe tener una consulta avanzada que muestre el autor con mas libros en la biblioteca  listar los libros de mayor a menor, entregar el codigo fuente del repositorio de github scrips de ORM
-Desarrollar un sistema de gestión de biblioteca utilizando ORM 
+Caso de Estudio
+1- Ejercicio consiste en desarrollar un sistema de gestion de biblioteca utilizando ORM debe permitir registrar libros,
+buscador de libros por autor y categoria, python sql puede ser django , modelado de datos debe tener libro dato
+usuario y prestamo, funcionalidades a imprementar son la crud basica de libros autores y usuario, busquedas por titulo
+por autor, la gestion de prestamos debe ser registrar el prestamo asociar el libro al usuario y las fechas, se debe
+marcar un libro como devuelto y se debe poder listar o ver los prestamos del momento, debe tener una consulta avanzada
+que muestre el autor con mas libros en la biblioteca  listar los libros de mayor a menor, entregar el codigo fuente del
+repositorio de github scrips de ORM
+
+2- Desarrollar un sistema de gestión de biblioteca utilizando ORM 
 El sistema debe poermitir:
 -Registrar libros
 -Buscar libros por autor, titulo, categoria 
@@ -19,21 +27,19 @@ Consulta avanzada de autor con más libros en la biblioteca, del que más tiene 
 -Código fuente en github 
 -Scripts de ORM
 
-________________________________________________________________________________________________________________________________________________________________________________________________________________________________CODIGO DE AUTH: "NYAW123456789" solo valido bajo ciertos parametros
+________________________________________________________________________________________________________________________________________________________________________________________________________________________________CODIGO DE AUTH: "NYAW123456789" solo valido bajo ciertos parametros ya definidos y funcionando
 
-- Fixeadas varias zonas completo 60% falta:
-- Zona para asignar prestamos a usuarios, teniendo un filtro 
-para busqueda de datos y que se puedan ver fechas de prestado 
-y vencimiento y en colores el estado actual del libro. (posible revision de inventario de libros)
-y boton para el prestamo
+- Fixeadas varias zonas completo 80% falta:
+- Zona para asignar prestamos a usuarios, teniendo un filtro (como bliotecario: Solo posible como cliente por ahora)
+para busqueda de datos (posible revision de inventario de libros).
 - visualizacion de libros sin iniciar sesion pero solicitar iniciar si se
 pide un prestamo
+- Que el admin pueda asignar el tiempo de el boton prestado (actualmente 15 dias)
 - Revizar cierre de sesion en entorno host porque sale error de pagina no funcional.. como si no funcionara 
-pero en local si es funcional 
+pero en local si es funcional (Solo Host- Si se utiliza localmente el cierre de sesion funciona correctamente)
 - Ajustar la apariencia a algo uniforme y mas agradable al usuario
-- Mostrar la imagen en la zona de la lista de libros
-
+- Mostrar la imagen en la zona de la lista de libros de cada libro
+- Responder preguntas y asignar lo faltante
 Preguntar:
-El usuario puede cambiar su informacion personal? porque si tiene libro en prestamo podria haber 
-fallencias o no haber confirmacion de un correo y direccion o solo deberia hacerlo un administrador
-o bibliotecario.
+El usuario puede cambiar su informacion personal? o solo deberia hacerlo un administrador
+o bibliotecario.(para evitar fallas de seguridad y robo de libros)
